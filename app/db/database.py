@@ -3,7 +3,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import sessionmaker
 
 # Connect to PostgreSQL
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@localhost/ledger_db"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@db/ledger_db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

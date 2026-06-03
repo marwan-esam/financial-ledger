@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # THE DATABASE
+  # Download a pre-built official PostgreSQL container
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ledger_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # This ensures the datbase won't wipe itself clean every time the container restarts
+      - postgres_data:/var/lib/postgresql/data
+    # A health check to make sure the database is ready before connecting to the api
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ledger_db"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
+  # THE API
+  api:
+    # This tells Compose to look in the current folder, find the Dockerfile and build it
+    build: .
+    ports:
+      - "8000:8000"
+    # Wait for the Healthcheck, not just the container
+    depends_on:
+      db:
+        condition: service_healthy
+
+# THE VIRTUAL HARD DRIVE
+volumes:
+  postgres_data:
