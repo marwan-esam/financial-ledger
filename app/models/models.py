@@ -1,22 +1,11 @@
-from sqlalchemy import create_engine, ForeignKey, DateTime
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
+from app.db import database
 import datetime
 
-# Connect to PostgreSQL
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:admin@localhost/ledger_db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-# Create the modern base class
-
-class Base(DeclarativeBase):
-  pass
-
 # The Account Table
-
-class Account(Base):
+class Account(database.Base):
   __tablename__ = "accounts"
 
   id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -25,8 +14,7 @@ class Account(Base):
 
 
 # The Transaction Table
-
-class Transaction(Base):
+class Transaction(database.Base):
   __tablename__ = "transactions"
 
   id: Mapped[int] = mapped_column(primary_key=True, index=True)
@@ -38,6 +26,4 @@ class Transaction(Base):
   receiver_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
 
 
-Base.metadata.create_all(bind=engine)
-
-
+database.Base.metadata.create_all(bind=database.engine)
