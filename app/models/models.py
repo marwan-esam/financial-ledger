@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy import ForeignKey, DateTime,CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 from app.db import database
@@ -7,6 +7,10 @@ import datetime
 # The Account Table
 class Account(database.Base):
   __tablename__ = "accounts"
+
+  __table_args__ = (
+    CheckConstraint('balance >= 0', name='check_positive_balance'),
+  )
 
   id: Mapped[int] = mapped_column(primary_key=True, index=True)
   owner_name: Mapped[str] = mapped_column(index=True)
@@ -25,5 +29,3 @@ class Transaction(database.Base):
   sender_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
   receiver_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
 
-
-database.Base.metadata.create_all(bind=database.engine)

@@ -57,6 +57,9 @@ def create_transaction(
     if not receiver:
       raise HTTPException(status_code=404, detail="Receiver account not found")
     
+    if sender.balance < transaction.amount:
+      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient funds for this transaction")
+    
     # Perform the mathematical transfer
     sender.balance -= transaction.amount
     receiver.balance += transaction.amount
